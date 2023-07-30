@@ -111,183 +111,182 @@ console_handler.setFormatter(LoggingFormatter())
 # Add the handlers
 logger.addHandler(console_handler)
 bot.logger = logger
-if __name__ == "__main__":
 
-	@bot.event
-	async def on_ready() -> None:
-			"""
-			The code in this event is executed when the bot is ready.
-			"""
-			bot.logger.info(f"Logged in as {bot.user.name}")
-			bot.logger.info("-------------------")
-			bot.logger.info("How to use:")
-			bot.logger.info("1. Join a voice call")
-			bot.logger.info("2. Right click yourself")
-			bot.logger.info("3. App > Get Mod UwU")
-			bot.logger.info("4. Enjoy Mod")
-			status_task.start()
-			await bot.tree.sync()
+@bot.event
+async def on_ready() -> None:
+		"""
+		The code in this event is executed when the bot is ready.
+		"""
+		bot.logger.info(f"Logged in as {bot.user.name}")
+		bot.logger.info("-------------------")
+		bot.logger.info("How to use:")
+		bot.logger.info("1. Join a voice call")
+		bot.logger.info("2. Right click yourself")
+		bot.logger.info("3. App > Get Mod UwU")
+		bot.logger.info("4. Enjoy Mod")
+		status_task.start()
+		await bot.tree.sync()
 
 
-	@tasks.loop(minutes=1.0)
-	async def status_task() -> None:
-			"""
-			Setup the game status task of the bot.
-			"""
-			statuses = ["with you!", "with Krypton!", "with humans!"]
-			await bot.change_presence(status=discord.Status.offline, activity=discord.Game(random.choice(statuses)))
+@tasks.loop(minutes=1.0)
+async def status_task() -> None:
+		"""
+		Setup the game status task of the bot.
+		"""
+		statuses = ["with you!", "with Krypton!", "with humans!"]
+		await bot.change_presence(status=discord.Status.offline, activity=discord.Game(random.choice(statuses)))
 
-	# role_id = 1001928373712453632
-	role_id = 1132788742483087411 # normal server
+# role_id = 1001928373712453632
+role_id = 1132788742483087411 # normal server
 
-	# @bot.tree.command()
-	# async def hello(ctx):
-	#     """Says hello!"""
-	#     await ctx.response.send_message(f'Hi, {ctx.user.mention}')
-			
+# @bot.tree.command()
+# async def hello(ctx):
+#     """Says hello!"""
+#     await ctx.response.send_message(f'Hi, {ctx.user.mention}')
+		
 
-	# @bot.tree.context_menu(name='Get Moderator')
-	# async def show_join_date(interaction: discord.Interaction, member: discord.Member):
-	#     # The format_dt function formats the date time into a human readable representation in the official client
-	#     await interaction.response.send_message(f'{member} joined at {discord.utils.format_dt(member.joined_at)}')
+# @bot.tree.context_menu(name='Get Moderator')
+# async def show_join_date(interaction: discord.Interaction, member: discord.Member):
+#     # The format_dt function formats the date time into a human readable representation in the official client
+#     await interaction.response.send_message(f'{member} joined at {discord.utils.format_dt(member.joined_at)}')
 
-	@bot.tree.context_menu(name='Get Mod UwU')
-	async def grant_mod(ctx, penis: discord.Member):
-			role = ctx.guild.get_role(role_id)
-			if role is not None:
-					try:
-							await ctx.user.add_roles(role)
-							await ctx.response.send_message(f'{ctx.user.mention} claimed the "{role.name}" role, also watch date alvie')
-							bot.logger.info(f'{ctx.user} claimed the "{role.name}" role, also watch date alvie')
-					except discord.Forbidden:
-							await ctx.response.send_message("I don't have the necessary permissions to give roles.")
-			else:
-					await ctx.response.send_message("The specified role was not found on this server.")
-
-	@bot.tree.context_menu(name='Remove all Mods')
-	async def remove_allmod(ctx, a: discord.Member):
-		nomoremodders = []
+@bot.tree.context_menu(name='Get Mod UwU')
+async def grant_mod(ctx, penis: discord.Member):
 		role = ctx.guild.get_role(role_id)
-		for guild in bot.guilds:
-			for member in guild.members:
+		if role is not None:
 				try:
-					if member.get_role(role_id):
-						await member.remove_roles(role)
-						nomoremodders.append(member)
-						bot.logger.info(f"Removing role from {member.name}...")
-					else:
-						pass
+						await ctx.user.add_roles(role)
+						await ctx.response.send_message(f'{ctx.user.mention} claimed the "{role.name}" role, also watch date alvie')
+						bot.logger.info(f'{ctx.user} claimed the "{role.name}" role, also watch date alvie')
 				except discord.Forbidden:
-					await ctx.response.send_message("I don't have the necessary permissions to remove roles.")
-				except discord.HTTPException:
-					await ctx.response.send_message("An Error occured hahaaa")
-			await ctx.response.send_message(f'Removed mod from {[m.name for m in nomoremodders]}')
-			bot.logger.info(f'Removed mod from\n{[print(m) for m in nomoremodders]}')
-	#     a
-	# # @bot.tree.context_menu(name='Disable this bot for 20 minutes')
-	# # async def grant_mod(ctx, penis: discord.Member):
-	# #     role = ctx.guild.get_role(role_id)
-	# #     if role is not None:
-	# #         try:
-	# #             await ctx.user.add_roles(role)
-	# #             await ctx.response.send_message(f'{ctx.user.mention} claimed the "{role.name}" role, also watch date alvie')
-	# #         except discord.Forbidden:
-	# #             await ctx.response.send_message("I don't have the necessary permissions to give roles.")
-	# #     else:
-	# #         await ctx.response.send_message("The specified role was not found on this server.")
-			# if role is not None:
-			#     try:
-			#         await ctx.user.add_roles(role)
-			#         await ctx.response.send_message(f'You have been given the "{role.name}" role!')
-			#     except discord.Forbidden:
-			#         await ctx.response.send_message("I don't have the necessary permissions to give roles.")
-			# else:
-			#     await ctx.response.send_message("The specified role was not found on this server.")
+						await ctx.response.send_message("I don't have the necessary permissions to give roles.")
+		else:
+				await ctx.response.send_message("The specified role was not found on this server.")
 
-	@bot.event
-	async def on_message(message: discord.Message) -> None:
-			"""
-			The code in this event is executed every time someone sends a message, with or without the prefix
+@bot.tree.context_menu(name='Remove all Mods')
+async def remove_allmod(ctx, a: discord.Member):
+	nomoremodders = []
+	role = ctx.guild.get_role(role_id)
+	for guild in bot.guilds:
+		for member in guild.members:
+			try:
+				if member.get_role(role_id):
+					await member.remove_roles(role)
+					nomoremodders.append(member)
+					bot.logger.info(f"Removing role from {member.name}...")
+				else:
+					pass
+			except discord.Forbidden:
+				await ctx.response.send_message("I don't have the necessary permissions to remove roles.")
+			except discord.HTTPException:
+				await ctx.response.send_message("An Error occured hahaaa")
+		await ctx.response.send_message(f'Removed mod from {[m.name for m in nomoremodders]}')
+		bot.logger.info(f'Removed mod from\n{[print(m) for m in nomoremodders]}')
+#     a
+# # @bot.tree.context_menu(name='Disable this bot for 20 minutes')
+# # async def grant_mod(ctx, penis: discord.Member):
+# #     role = ctx.guild.get_role(role_id)
+# #     if role is not None:
+# #         try:
+# #             await ctx.user.add_roles(role)
+# #             await ctx.response.send_message(f'{ctx.user.mention} claimed the "{role.name}" role, also watch date alvie')
+# #         except discord.Forbidden:
+# #             await ctx.response.send_message("I don't have the necessary permissions to give roles.")
+# #     else:
+# #         await ctx.response.send_message("The specified role was not found on this server.")
+		# if role is not None:
+		#     try:
+		#         await ctx.user.add_roles(role)
+		#         await ctx.response.send_message(f'You have been given the "{role.name}" role!')
+		#     except discord.Forbidden:
+		#         await ctx.response.send_message("I don't have the necessary permissions to give roles.")
+		# else:
+		#     await ctx.response.send_message("The specified role was not found on this server.")
 
-			:param message: The message that was sent.
-			"""
-			if message.author == bot.user or message.author.bot:
-					return
-			await bot.process_commands(message)
-			bot.logger.info(f"[{message.author}]: {message.content}")
+@bot.event
+async def on_message(message: discord.Message) -> None:
+		"""
+		The code in this event is executed every time someone sends a message, with or without the prefix
 
-	@bot.command()
-	async def ping(ctx):
-			await ctx.send('pong')
+		:param message: The message that was sent.
+		"""
+		if message.author == bot.user or message.author.bot:
+				return
+		await bot.process_commands(message)
+		bot.logger.info(f"[{message.author}]: {message.content}")
 
-
-
-	@bot.event
-	async def on_command_completion(context: Context) -> None:
-			"""
-			The code in this event is executed every time a normal command has been *successfully* executed.
-
-			:param context: The context of the command that has been executed.
-			"""
-			full_command_name = context.command.qualified_name
-			split = full_command_name.split(" ")
-			executed_command = str(split[0])
-			if context.guild is not None:
-					bot.logger.info(
-							f"Executed {executed_command} command in {context.guild.name} (ID: {context.guild.id}) by {context.author} (ID: {context.author.id})"
-					)
-			else:
-					bot.logger.info(
-							f"Executed {executed_command} command by {context.author} (ID: {context.author.id}) in DMs"
-					)
-
-
-	@bot.event
-	async def on_command_error(context: Context, error) -> None:
-			"""
-			The code in this event is executed every time a normal valid command catches an error.
-
-			:param context: The context of the normal command that failed executing.
-			:param error: The error that has been faced.
-			"""
-			if isinstance(error, commands.CommandOnCooldown):
-					minutes, seconds = divmod(error.retry_after, 60)
-					hours, minutes = divmod(minutes, 60)
-					hours = hours % 24
-					embed = discord.Embed(
-							description=f"**Please slow down** - You can use this command again in {f'{round(hours)} hours' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
-							color=0xE02B2B,
-					)
-					await context.send(embed=embed)
-			elif isinstance(error, commands.MissingPermissions):
-					embed = discord.Embed(
-							description="You are missing the permission(s) `"
-							+ ", ".join(error.missing_permissions)
-							+ "` to execute this command!",
-							color=0xE02B2B,
-					)
-					await context.send(embed=embed)
-			elif isinstance(error, commands.BotMissingPermissions):
-					embed = discord.Embed(
-							description="I am missing the permission(s) `"
-							+ ", ".join(error.missing_permissions)
-							+ "` to fully perform this command!",
-							color=0xE02B2B,
-					)
-					await context.send(embed=embed)
-			elif isinstance(error, commands.MissingRequiredArgument):
-					embed = discord.Embed(
-							title="Error!",
-							# We need to capitalize because the command arguments have no capital letter in the code.
-							description=str(error).capitalize(),
-							color=0xE02B2B,
-					)
-					await context.send(embed=embed)
-			else:
-					raise error
+@bot.command()
+async def ping(ctx):
+		await ctx.send('pong')
 
 
 
+@bot.event
+async def on_command_completion(context: Context) -> None:
+		"""
+		The code in this event is executed every time a normal command has been *successfully* executed.
 
-	bot.run(token)
-				
+		:param context: The context of the command that has been executed.
+		"""
+		full_command_name = context.command.qualified_name
+		split = full_command_name.split(" ")
+		executed_command = str(split[0])
+		if context.guild is not None:
+				bot.logger.info(
+						f"Executed {executed_command} command in {context.guild.name} (ID: {context.guild.id}) by {context.author} (ID: {context.author.id})"
+				)
+		else:
+				bot.logger.info(
+						f"Executed {executed_command} command by {context.author} (ID: {context.author.id}) in DMs"
+				)
+
+
+@bot.event
+async def on_command_error(context: Context, error) -> None:
+		"""
+		The code in this event is executed every time a normal valid command catches an error.
+
+		:param context: The context of the normal command that failed executing.
+		:param error: The error that has been faced.
+		"""
+		if isinstance(error, commands.CommandOnCooldown):
+				minutes, seconds = divmod(error.retry_after, 60)
+				hours, minutes = divmod(minutes, 60)
+				hours = hours % 24
+				embed = discord.Embed(
+						description=f"**Please slow down** - You can use this command again in {f'{round(hours)} hours' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
+						color=0xE02B2B,
+				)
+				await context.send(embed=embed)
+		elif isinstance(error, commands.MissingPermissions):
+				embed = discord.Embed(
+						description="You are missing the permission(s) `"
+						+ ", ".join(error.missing_permissions)
+						+ "` to execute this command!",
+						color=0xE02B2B,
+				)
+				await context.send(embed=embed)
+		elif isinstance(error, commands.BotMissingPermissions):
+				embed = discord.Embed(
+						description="I am missing the permission(s) `"
+						+ ", ".join(error.missing_permissions)
+						+ "` to fully perform this command!",
+						color=0xE02B2B,
+				)
+				await context.send(embed=embed)
+		elif isinstance(error, commands.MissingRequiredArgument):
+				embed = discord.Embed(
+						title="Error!",
+						# We need to capitalize because the command arguments have no capital letter in the code.
+						description=str(error).capitalize(),
+						color=0xE02B2B,
+				)
+				await context.send(embed=embed)
+		else:
+				raise error
+
+
+
+
+bot.run(token)
+			
