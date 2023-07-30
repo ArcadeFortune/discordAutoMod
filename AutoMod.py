@@ -2,13 +2,15 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 # from config import token
-token = 'MTEzNDUzNDIwNDczMDkxNjk0NA.GG4R8F.JOhlGifs3etRpzS_dptsLA7-y9YQ1ji7L3CqAE'
 
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
+token = os.getenv('TOKEN')
 import logging
 import os
-import platform
 import random
 import discord
 from discord.ext import commands, tasks
